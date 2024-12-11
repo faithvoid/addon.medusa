@@ -35,3 +35,6 @@ Requires the latest version of XBMC (3.6-DEV-r33046 or later) from Xbins (as it 
 
 ## Disclaimer:
 - The Internet Archive is a vast archive of many files, tons of which are legal to download! Make sure you follow the copyright laws of your region while downloading from Internet Archive sources. Support will not be given for anyone trying to use this utility for blatant piracy. 
+
+## Credits:
+- Icon from flaticon.com
