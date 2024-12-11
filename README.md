@@ -1,5 +1,5 @@
 # Medusa
-Internet Archive streamer for XBMC. 
+Internet Archive streaming client for XBMC. 
 
 ![1](release/default.tbn)
 
