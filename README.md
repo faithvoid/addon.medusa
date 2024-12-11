@@ -20,6 +20,7 @@ Requires the latest version of XBMC from Xbins (as it has crucial TLS/SSL update
 - You tell me.
 
 ## TODO:
+- Implement the ability to search for and add collections on the fly.
 - Improve media streaming a bit.
 - Implement better filename sanitization
 - Implement some sort of login system so access-locked files can be downloaded.
