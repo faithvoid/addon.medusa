@@ -63,34 +63,60 @@ def list_collections(category):
 
     xbmcplugin.endOfDirectory(addon_handle)
 
-def list_files(collection_id):
-    """List files within a selected collection and provide options to stream them."""
+def list_files(collection_id, folder=""):
+    """
+    List files and subfolders within a selected collection or specific folder.
+    """
     metadata = fetch_collection_metadata(collection_id)
     if not metadata:
         return
-    
+
     files = metadata.get("files", [])
     if not files:
         xbmcgui.Dialog().ok(ADDON_NAME, "No files found in this collection.")
         return
-    
-    # Filter the files by media extensions
-    file_names = [file["name"] for file in files if "name" in file and file["name"].lower().endswith(tuple(MEDIA_EXTENSIONS))]
-    
-    if not file_names:
-        xbmcgui.Dialog().ok(ADDON_NAME, "No media files found in this collection.")
-        return
 
-    # Add the video files to the list for selection
-    for file_name in file_names:
-        encoded_file_name = urllib.quote(file_name.encode('utf-8'))
+    # Prepare lists for subfolders and files
+    subfolders = set()
+    current_files = []
+
+    # Process each file in the metadata
+    for file in files:
+        if "name" not in file:
+            continue
+
+        file_path = file["name"]
+        if not file_path.startswith(folder):  # Skip files outside the current folder
+            continue
+
+        relative_path = file_path[len(folder):].lstrip("/")
+        if "/" in relative_path:  # Subfolder detected
+            subfolder = relative_path.split("/")[0]
+            subfolders.add(subfolder)
+        elif relative_path:  # File in the current folder
+            current_files.append(file_path)
+
+    # List subfolders first
+    for subfolder in sorted(subfolders):
+        list_item = xbmcgui.ListItem(label=subfolder)
+        list_item.setInfo('video', {'title': subfolder})
+        next_folder = "/".join([folder, subfolder]).strip('/')
+        query = urllib.urlencode({'collection_id': collection_id, 'folder': next_folder})
+        url_with_query = "{0}?{1}".format(sys.argv[0], query)
+        xbmcplugin.addDirectoryItem(handle=addon_handle, url=url_with_query, listitem=list_item, isFolder=True)
+
+    # List files in the current folder
+    for file_path in sorted(current_files):
+        file_name = file_path.split("/")[-1]
+        encoded_file_name = urllib.quote(file_path.encode('utf-8'))
         url = "https://archive.org/download/{0}/{1}".format(collection_id, encoded_file_name)
-
         list_item = xbmcgui.ListItem(label=file_name)
         list_item.setInfo('video', {'title': file_name})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=False)
 
+    # Finalize directory
     xbmcplugin.endOfDirectory(addon_handle)
+
 
 def play_video(url):
     """Play the selected video URL."""
@@ -107,22 +133,22 @@ params = urlparse.parse_qs(parsed_url.query)
 if 'url' in params:
     # If a 'url' parameter is found, play the selected video
     play_video(params['url'][0])
+elif 'collection_id' in params and 'folder' in params:
+    # If a folder is provided, list files in that folder
+    list_files(params['collection_id'][0], params['folder'][0])
 elif 'collection_id' in params:
-    # If a 'collection_id' is provided, list files in that collection
+    # Start at the root of the collection
     list_files(params['collection_id'][0])
 elif 'category' in params:
-    # If a 'category' parameter is provided, list collections in that category
+    # List collections for the selected category
     list_collections(params['category'][0])
 else:
-    # Otherwise, list the available categories in the static order defined in CATEGORY_ORDER
+    # Display available categories
     for category in CATEGORY_ORDER:
         list_item = xbmcgui.ListItem(label=category)
         list_item.setInfo('video', {'title': category})
-
-        # Format the URL to pass the category as a query parameter
         query = urllib.urlencode({'category': category})
         url_with_query = "{0}?{1}".format(sys.argv[0], query)
-
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url_with_query, listitem=list_item, isFolder=True)
 
     xbmcplugin.endOfDirectory(addon_handle)
