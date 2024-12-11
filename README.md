@@ -5,9 +5,12 @@ Internet Archive streaming add-on for XBMC.
 
 Requires the latest version of XBMC (3.6-DEV-r33046 or later) from Xbins (as it has crucial TLS/SSL updates that allow this script to work). Sources are NOT provided (outside of one public domain movie source) and must be input manually!
 
-![1](screenshots/1.bmp)
-![2](screenshots/2.bmp)
-![3](screenshots/3.bmp)
+![1](screenshots/1.png)
+![2](screenshots/2.png)
+![3](screenshots/3.png)
+![4](screenshots/4.png)
+![5](screenshots/5.png)
+
 
 ## How To Use:
 - Download latest release file, or "release" folder from the repository (delete update.zip if you do!).
