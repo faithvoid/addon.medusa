@@ -9,8 +9,6 @@ import urlparse
 ADDON_NAME = "Medusa"
 BASE_URL = "https://archive.org/details/"  # Base URL for Internet Archive collections
 
-MEDIA_EXTENSIONS = {".mp4", ".mp3", ".avi", ".mkv", ".wav", ".flac", ".mov", ".mpg"}
-
 # Define the collections for each category
 CATEGORY_COLLECTIONS = {
     "Television": [
