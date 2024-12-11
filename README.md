@@ -19,7 +19,6 @@ Requires the latest version of XBMC from Xbins (as it has crucial TLS/SSL update
 ## TODO:
 - Improve media streaming a bit.
 - Implement better filename sanitization
-- Implement scanning from multiple collections at the same time.
 - Implement some sort of login system so access-locked files can be downloaded.
 
 ## Disclaimer:
