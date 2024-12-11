@@ -17,6 +17,7 @@ Requires the latest version of XBMC from Xbins (as it has crucial TLS/SSL update
 
 ## Issues:
 - Some videos WILL crash your Xbox if they're too high-quality. This isn't the fault of the script, the Xbox is very picky about what files it's fine with (64MB and a Pentium III isn't a lot to work with). Look for specifically 360p/480p files where available.
+- In a similar manner, some videos will just play as audio in the background. This also isn't the fault of the script, the Xbox just doesn't handle certain codecs well. Try a different file format or encode!
 - You tell me.
 
 ## TODO:
