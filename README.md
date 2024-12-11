@@ -1,7 +1,7 @@
 # Medusa
 Internet Archive streamer for XBMC. 
 
-![1](default.tbn)
+![1](release/default.tbn)
 
 Requires the latest version of XBMC from Xbins (as it has crucial TLS/SSL updates that allow this script to work). Sources are NOT provided and must be input manually!
 
