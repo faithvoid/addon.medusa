@@ -9,7 +9,7 @@ Requires the latest version of XBMC from Xbins (as it has crucial TLS/SSL update
 
 ## How To Use:
 - Download latest release file, or "release" folder from the repository.
-- Extract the .zip file, edit "default.py" to point "COLLECTION_URL" to the Internet Archive collection of your choice 
+- Extract the .zip file, edit "default.py" and modify the "collections =" section to point to the Internet Archive collection of your choice! Just make a copy of the line below and modify it as needed.
 - Copy the "Medusa" folder to Q:/plugins/video
 - Run the add-on and enjoy!
 
