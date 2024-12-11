@@ -30,6 +30,7 @@ Requires the latest version of XBMC (3.6-DEV-r33046 or later) from Xbins (as it 
 - Implement some sort of login system so access-locked files can be downloaded.
 - Incorporate update script.
 - Incorporate settings menu with the following options: Internet Archive Login - Hide Duplicate Entries - Show (X) File Type Only)
+- Add companion script to add/remove sources
 
 ## Disclaimer:
 - The Internet Archive is a vast archive of many files, tons of which are legal to download! Make sure you follow the copyright laws of your region while downloading from Internet Archive sources. Support will not be given for anyone trying to use this utility for blatant piracy. 
