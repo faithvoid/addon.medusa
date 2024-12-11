@@ -14,7 +14,6 @@ Requires the latest version of XBMC from Xbins (as it has crucial TLS/SSL update
 - Run the add-on and enjoy!
 
 ## Issues:
-- Some files with absurdly long file names and multiple special characters (like "4 Game in One - Ice Hockey, Phantom UFO, Spy Vs. Spy, Cosmic Avenger (1983) (Bit Corporation) (PAL).bin") will crash the script. Sanitization function definitely needs a bit of work.
 - You tell me.
 
 ## TODO:
