@@ -109,7 +109,7 @@ def list_files(collection_id, folder=""):
         encoded_file_name = urllib.quote(file_path.encode('utf-8'))
         url = "https://archive.org/download/{0}/{1}".format(collection_id, encoded_file_name)
         list_item = xbmcgui.ListItem(label=file_name)
-        list_item.setInfo('video', {'title': file_name})
+        list_item.setInfo('', {'title': file_name})
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=False)
 
     # Finalize directory
