@@ -5,31 +5,42 @@ import xbmcplugin
 import requests
 import urllib
 import urlparse
+import json
 
 ADDON_NAME = "Medusa"
 BASE_URL = "https://archive.org/details/"  # Base URL for Internet Archive collections
-
-# Define the collections for each category
-CATEGORY_COLLECTIONS = {
-    "Television": [
-        {"name": "N/A", "id": "N/A"}
-    ],
-    "Cartoons": [
-        {"name": "N/A", "id": "N/A"}
-    ],
-    "Anime": [
-        {"name": "N/A", "id": "N/A"}
-    ],
-    "Movies": [
-        {"name": "Public Domain Movies", "id": "publicmovies212"}
-    ],
-    "Other": [
-        {"name": "N/A", "id": "N/A"}
-    ]
-}
+COLLECTIONS_FILE = "Q:/plugins/video/Medusa/collections.txt"  # File containing collections data
 
 # List categories in the desired order
 CATEGORY_ORDER = ["Television", "Cartoons", "Anime", "Movies", "Other"]
+
+def read_collections_from_file(filename):
+    """Read collections from a file and return a dictionary."""
+    if not os.path.exists(filename):
+        xbmcgui.Dialog().ok(ADDON_NAME, "Collections file not found: {}".format(filename))
+        return {}
+
+    try:
+        with open(filename, 'r') as file:
+            collections = json.load(file)
+        return collections
+    except Exception as e:
+        xbmcgui.Dialog().ok(ADDON_NAME, "Failed to read collections file: {}".format(str(e)))
+        return {}
+
+# Read collections from the file
+CATEGORY_COLLECTIONS = read_collections_from_file(COLLECTIONS_FILE)
+
+def fetch_collection_metadata(collection_id):
+    """Fetch metadata for a collection from the Internet Archive."""
+    api_url = "https://archive.org/metadata/{0}".format(collection_id)
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.RequestException as e:
+        xbmcgui.Dialog().ok(ADDON_NAME, "Failed to fetch metadata for {0}: {1}".format(collection_id, str(e)))
+    return None
 
 def fetch_collection_metadata(collection_id):
     """Fetch metadata for a collection from the Internet Archive."""
