@@ -11,25 +11,23 @@ ADDON_NAME = "Medusa"
 BASE_URL = "https://archive.org/details/"  # Base URL for Internet Archive collections
 COLLECTIONS_FILE = "Q:/plugins/video/Medusa/collections.txt"  # File containing collections data
 
-# List categories in the desired order
-CATEGORY_ORDER = ["Television", "Cartoons", "Anime", "Movies", "Other"]
-
 def read_collections_from_file(filename):
-    """Read collections from a file and return a dictionary."""
+    """Read collections from a file and return a dictionary and a list of categories."""
     if not os.path.exists(filename):
         xbmcgui.Dialog().ok(ADDON_NAME, "Collections file not found: {}".format(filename))
-        return {}
+        return {}, []
 
     try:
         with open(filename, 'r') as file:
             collections = json.load(file)
-        return collections
+        categories = list(collections.keys())
+        return collections, categories
     except Exception as e:
         xbmcgui.Dialog().ok(ADDON_NAME, "Failed to read collections file: {}".format(str(e)))
-        return {}
+        return {}, []
 
-# Read collections from the file
-CATEGORY_COLLECTIONS = read_collections_from_file(COLLECTIONS_FILE)
+# Read collections and category order from the file
+CATEGORY_COLLECTIONS, CATEGORY_ORDER = read_collections_from_file(COLLECTIONS_FILE)
 
 def fetch_collection_metadata(collection_id):
     """Fetch metadata for a collection from the Internet Archive."""
