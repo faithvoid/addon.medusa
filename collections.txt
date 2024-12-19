@@ -1,0 +1,17 @@
+{
+    "Television": [
+        {"name": "N/A", "id": "N/A"}
+    ],
+    "Cartoons": [
+        {"name": "N/A", "id": "N/A"}
+    ],
+    "Anime": [
+        {"name": "N/A", "id": "N/A"}
+    ],
+    "Movies": [
+        {"name": "Public Domain Movies", "id": "publicmovies212"}
+    ],
+    "Other": [
+        {"name": "N/A", "id": "N/A"}
+    ]
+}
