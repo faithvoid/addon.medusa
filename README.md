@@ -23,7 +23,6 @@ Requires the latest version of XBMC (3.6-DEV-r33046 or later) from Xbins (as it 
 - You tell me.
 
 ## TODO:
-- Save collections into a seperate .txt file instead of in default.py (for safe script updating!)
 - Implement the ability to search for and add collections on the fly.
 - Improve media streaming a bit.
 - Implement better filename sanitization
@@ -37,3 +36,4 @@ Requires the latest version of XBMC (3.6-DEV-r33046 or later) from Xbins (as it 
 
 ## Credits:
 - Icon from flaticon.com
+- Internet Archive :)
