@@ -83,82 +83,70 @@ def list_collections(category):
     xbmcplugin.endOfDirectory(addon_handle)
 
 def download_file(url, filename):
-    """Download the file to the F:/Media directory with a progress bar and speed display."""
+    """Download the file to the DOWNLOAD_DIR with a progress bar and speed display."""
     try:
         # Create the download directory if it doesn't exist
         if not os.path.exists(DOWNLOAD_DIR):
             os.makedirs(DOWNLOAD_DIR)
 
-        # Use requests to get the file, with stream=True to download it in chunks
-        response = requests.get(url, stream=True)
+        # Initialize the progress dialog
+        progress_dialog = xbmcgui.DialogProgress()
+        progress_dialog.create("Downloading", "Downloading " + filename)
 
-        if response.status_code == 200:
-            # Get total file size from Content-Length header
-            total_size = int(response.headers.get('Content-Length', 0))
-            file_path = os.path.join(DOWNLOAD_DIR, filename)
-            
-            # Open the file to write the downloaded content in chunks
-            with open(file_path, 'wb') as f:
-                downloaded_size = 0
-                chunk_size = 8192  # 8 KB chunks
-                start_time = time.time()  # Track time when download starts
-                last_update_time = start_time  # Time of the last progress update
-                last_speed_kbps = 0  # Last speed value to avoid showing "0.0 kBps"
+        # Start downloading regardless of file size
+        response = requests.get(url, stream=True, timeout=30)
 
-                # Initialize the progress dialog
-                progress_dialog = xbmcgui.DialogProgress()
-                progress_dialog.create("Downloading", "Starting download...", "", "")
+        # Check if the request was successful
+        if response.status_code != 200:
+            xbmcgui.Dialog().ok(ADDON_NAME, "Failed to retrieve the file: HTTP {}".format(response.status_code))
+            return
 
-                # Download the file in chunks
-                bytes_this_second = 0  # To track the number of bytes downloaded in the last second
-                for chunk in response.iter_content(chunk_size=chunk_size):
-                    if chunk:
-                        # Write the chunk to the file
-                        f.write(chunk)
-                        downloaded_size += len(chunk)  # Update downloaded size
-                        bytes_this_second += len(chunk)  # Track bytes downloaded in the last second
+        # Get total file size from Content-Length header
+        total_size = int(response.headers.get('Content-Length', 0))
+        file_path = os.path.join(DOWNLOAD_DIR, filename)
+        
+        # Initialize variables for tracking the downloaded size
+        start_time = time.time()
+        downloaded_size = 0
+        chunk_size = 4096 * 1024  # 4 MB chunks
 
-                        # Calculate elapsed time for current chunk download
-                        current_time = time.time()
-                        elapsed_time = current_time - last_update_time
+        # Open the file to write the downloaded content in chunks
+        with open(file_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                if not chunk:
+                    break
 
-                        # Update speed once per second (speed in kBps)
-                        if elapsed_time >= 1:  # Only update the speed once per second
-                            speed_kbps = bytes_this_second / 1024  # Convert bytes to kilobytes
-                            bytes_this_second = 0  # Reset bytes this second counter
-                            last_speed_kbps = speed_kbps
-                            last_update_time = current_time  # Update last update time
+                # Write the chunk to the file
+                f.write(chunk)
+                downloaded_size += len(chunk)
 
-                        # Update progress bar (convert to MB)
-                        downloaded_mb = downloaded_size / (1024 * 1024)  # Convert to MB
-                        total_mb = total_size / (1024 * 1024)  # Convert to MB
-                        # Calculate percentage (ensure it's an integer)
-                        percentage = int((downloaded_size / total_size) * 100) if total_size else 0
+                # Calculate elapsed time and speed
+                elapsed_time = time.time() - start_time
+                if elapsed_time > 0:
+                    speed_kbps = (downloaded_size / elapsed_time) / 1024  # Convert to Kbps
+                    progress = int((downloaded_size / float(total_size)) * 100)
+                    mb_downloaded = downloaded_size / (1024.0 * 1024.0)  # Convert to MB
 
-                        # Display download speed on a separate line only if speed is not 0 or has changed
-                        if last_speed_kbps > 0:  # Only show speed if it is greater than 0
-                            progress_dialog.update(percentage, 
-                                                   "Downloading: {} MB of {} MB".format(downloaded_mb, total_mb),
-                                                   "",
-                                                   "Speed: {} KBps".format(last_speed_kbps))
-                        else:
-                            progress_dialog.update(percentage, 
-                                                   "Downloading: {} MB of {} MB".format(downloaded_mb, total_mb),
-                                                   "",
-                                                   "")  # Don't display speed if it's zero
+                    # Update progress dialog
+                    progress_dialog.update(
+                        progress,
+                        "Downloading: {:.2f} MB".format(mb_downloaded),
+                        "Speed: {:.2f} Kbps".format(speed_kbps),
+                        "Progress: {}%".format(progress)
+                    )
 
-                        # Check if the user cancelled the download
-                        if progress_dialog.iscanceled():
-                            xbmcgui.Dialog().ok("Download Cancelled", "The download was cancelled.")
-                            return
+                if progress_dialog.iscanceled():
+                    progress_dialog.close()
+                    xbmcgui.Dialog().ok("Cancelled", "Download cancelled")
+                    return
 
-                progress_dialog.close()  # Close the progress dialog after download is complete
-            xbmcgui.Dialog().ok("Download Complete", "The file has been downloaded: {0}".format(filename))
-        else:
-            xbmcgui.Dialog().ok("Download Failed", "Failed to download the file from: {0}".format(url))
+        progress_dialog.close()
+        xbmcgui.Dialog().ok("Download Complete", "The file has been downloaded: {}".format(filename))
 
     except Exception as e:
-        xbmcgui.Dialog().ok("Download Error", "Error downloading file: {0}".format(str(e)))
+        xbmcgui.Dialog().ok("Download Error", "Error downloading file: {}".format(str(e)))
+    except Exception as e:
+        xbmcgui.Dialog().ok("Download Error", "Error downloading file: {}".format(str(e)))
 
 def list_files(collection_id, folder=""):
     """
