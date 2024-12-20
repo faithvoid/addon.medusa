@@ -1,5 +1,5 @@
 # Medusa
-Internet Archive streaming add-on for XBMC. 
+Internet Archive streaming & downloading add-on for XBMC. 
 
 ![1](release/default.tbn)
 
