@@ -6,6 +6,7 @@ import requests
 import urllib
 import urlparse
 import json
+import re
 
 ADDON_NAME = "Medusa"
 BASE_URL = "https://archive.org/details/"  # Base URL for Internet Archive collections
@@ -81,18 +82,32 @@ def list_collections(category):
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url_with_query, listitem=list_item, isFolder=True)
 
     xbmcplugin.endOfDirectory(addon_handle)
+    
+def sanitize_filename(filename):
+    """Sanitize the filename to comply with FATX standards."""
+    # Replace prohibited characters with an underscore
+    sanitized = re.sub(r'[<>:"/\\|?*,]', '', filename)
+    # Ensure the filename does not exceed 42 characters including the extension
+    if len(sanitized) > 42:
+        # Keep the extension and truncate the name part
+        name, ext = os.path.splitext(sanitized)
+        sanitized = name[:42 - len(ext)] + ext
+    return sanitized
 
 def download_file(url, filename):
     """Download the file to the DOWNLOAD_DIR with a progress bar and speed display."""
     try:
+        # Sanitize the filename
+        filename = sanitize_filename(filename)
+        
         # Create the download directory if it doesn't exist
         if not os.path.exists(DOWNLOAD_DIR):
             os.makedirs(DOWNLOAD_DIR)
 
         # Initialize the progress dialog
         progress_dialog = xbmcgui.DialogProgress()
-        progress_dialog.create(filename, "Downloading " + filename + "...")
-        
+        progress_dialog.create(filename, "Downloading " + filename)
+
         # Start downloading regardless of file size
         response = requests.get(url, stream=True, timeout=30)
 
@@ -143,8 +158,6 @@ def download_file(url, filename):
         progress_dialog.close()
         xbmcgui.Dialog().ok("Download Complete", "The file has been downloaded: {}".format(filename))
 
-    except Exception as e:
-        xbmcgui.Dialog().ok("Download Error", "Error downloading file: {}".format(str(e)))
     except Exception as e:
         xbmcgui.Dialog().ok("Download Error", "Error downloading file: {}".format(str(e)))
 
