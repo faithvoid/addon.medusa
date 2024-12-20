@@ -91,8 +91,8 @@ def download_file(url, filename):
 
         # Initialize the progress dialog
         progress_dialog = xbmcgui.DialogProgress()
-        progress_dialog.create("Downloading", "Downloading " + filename)
-
+        progress_dialog.create(filename, "Downloading " + filename + "...")
+        
         # Start downloading regardless of file size
         response = requests.get(url, stream=True, timeout=30)
 
