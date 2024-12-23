@@ -21,7 +21,7 @@ import re
 ADDON_NAME = "Medusa"
 BASE_URL = "https://archive.org/details/"  # Base URL for Internet Archive collections
 DOWNLOAD_DIR = "F:/Medusa"  # Directory to save downloaded files
-COLLECTIONS_FILE = "Q:/plugins/video/Medusa/collections.txt"  # File containing collections data
+COLLECTIONS_FILE = os.path.join(os.getcwd(), "collections.txt")  # File containing collections data
 
 def read_collections_from_file(filename):
     """Read collections from a file and return a dictionary and a list of categories."""
